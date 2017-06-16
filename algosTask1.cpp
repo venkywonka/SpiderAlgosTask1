@@ -34,8 +34,7 @@ void computelps(int M,int *lps){// length of the previous longest prefix suffix
             {
                 len = lps[len-1];
  
-                // Also, note that we do not increment
-                // i here
+                
             }
             else // if (len == 0)
             {
@@ -49,17 +48,15 @@ void computelps(int M,int *lps){// length of the previous longest prefix suffix
 
 
 //string searching using kmp algorithm
-void KMPSearch()
+int KMPSearch()
 {
-   int M = strlen(query);
-    int N = strlen(lines[lineno].c_str());
+    int flag=0;
+	int M = strlen(query);
+    int N = strlen(lines[lineno].c_str()); 
+    int lps[M];// create lps[] that will hold the longest prefix suffix
  
-    // create lps[] that will hold the longest prefix suffix
-    // values for pattern
-    int lps[M];
- 
-    // Preprocess the pattern (calculate lps[] array)
-    computelps(M, lps);
+    
+    computelps(M, lps);//compute lps[] that will hold the longest prefix suffix
  
     int i = 0;  // index for line[]
     int j  = 0;  // index for query[]
@@ -76,14 +73,17 @@ void KMPSearch()
         	int index = i-j;
         	if(index==0){
         		if(lines[lineno][M]==' '||lines[lineno][M]=='\0'){   //checking if its a word and not a subword of the required query
-					if(1){                   //updating into output textfile
+					if(1){                   //updating into output 
 						cout<<"\npage:"<<pgno<<", line:"<<lineno+1;
+						++flag;
+						
 						}
             	}
 			}
 			else if((lines[lineno][index-1]==' '&&lines[lineno][index+M]==' ')||(lines[lineno][index-1]==' '&&lines[lineno][index+M]=='\0')){     //checking if its a word and not a subword of the required query
-					if(1){                           //updating into output textfile
+					if(1){                           //updating into output 
 						cout<<"\npage:"<<pgno<<", line:"<<lineno+1;
+						++flag;
 						}
             }
             
@@ -100,10 +100,10 @@ void KMPSearch()
                 i = i+1;
         }
     }
-    if(1){                   //updating into output textfile
-		cout<<"\nnone";
-		}
+    return flag;
+    
 }
+
 
 
 //readPage function
@@ -111,13 +111,13 @@ void readPage(int pageno){
 	ifstream p;
 	string filename = "page_1.txt";
 	string l;
-	if(pageno<=9)filename[5]=(char)pageno;
-	else { filename[5]= (char) pageno/10;
-	       filename[6]= (char) pageno%10;
+	if(pageno<=9)filename[5]=48+pageno;
+	else { filename[5]= 48+pageno/10;
+	       filename[6]= 48+pageno%10;
 		   filename[7]='.';
 		   filename[8]='t';
 		   filename[9]='x';
-		   filename[10]='t';
+		   filename.append("t");
 		   }
 	p.open(filename.c_str());
 	
@@ -133,6 +133,7 @@ int main(){
 	ifstream q;
 	q.open("queries.txt");
 	while(q>>query){
+		int flag=0;
 		if(1){
 			cout<<"\nword:"<<query;
 			cout<<"\noccurrences:";
@@ -141,13 +142,13 @@ int main(){
 			lines.clear();			
 			readPage(pgno);	
 			for(lineno=0; lineno<lines.size();++lineno)	
-				KMPSearch();
-		}			
+				flag+=KMPSearch();
+		}
+		if(flag==0)cout<<"\nnone";			
 	}		
 	q.close();
 	return 0;		
 }
-
 
 
 
